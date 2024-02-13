@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { signUpUser } from "../services/authService"; // Adjust import as necessary
+import { RootStackParamList } from "../AppNavigator"; // Adjust import as necessary
 import { StackNavigationProp } from "@react-navigation/stack";
-import { signUpUser } from "../services/authService";
-import { RootStackParamList } from "../AppNavigator";
 
-// Define the navigation prop type for the SignUp screen
 type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Profile"
+  "Login" | "Profile"
 >;
 
 const SignUpScreen = () => {
@@ -19,8 +18,9 @@ const SignUpScreen = () => {
 
   const handleSignUp = async () => {
     try {
-      await signUpUser(email, password, name);
-      navigation.navigate("Profile", { email, name });
+      const token = await signUpUser(email, password, name);
+      console.log(token); // For demonstration
+      navigation.navigate("Login"); // Navigate to login after successful sign-up
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
@@ -59,9 +59,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   input: {
+    width: "100%", // Ensure input fields span the full width
     marginBottom: 12,
     borderWidth: 1,
     padding: 10,

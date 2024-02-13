@@ -1,18 +1,27 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const generateFakeToken = () =>
+  `fake-jwt-token-${Math.random().toString(36).substr(2, 9)}`;
+
 export const signUpUser = async (
   email: string,
   password: string,
   name: string
-): Promise<void> => {
-  const userData = JSON.stringify({ email, password, name });
+): Promise<string> => {
+  const userData = JSON.stringify({
+    email,
+    password,
+    name,
+    token: generateFakeToken(),
+  });
   await AsyncStorage.setItem(email, userData);
+  return JSON.parse(userData).token;
 };
 
 export const loginUser = async (
   email: string,
   password: string
-): Promise<string> => {
+): Promise<{ name: string; token: string }> => {
   const userDataString = await AsyncStorage.getItem(email);
   if (!userDataString) {
     throw new Error("User not found. Please sign up.");
@@ -21,5 +30,5 @@ export const loginUser = async (
   if (userData.password !== password) {
     throw new Error("Incorrect password.");
   }
-  return userData.name; // Return the user's name on successful login
+  return { name: userData.name, token: userData.token };
 };

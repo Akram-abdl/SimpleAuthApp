@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { loginUser } from "../services/authService"; // Adjust import as necessary
+import { RootStackParamList } from "../AppNavigator"; // Adjust import as necessary
 import { StackNavigationProp } from "@react-navigation/stack";
-import { loginUser } from "../services/authService";
-import { RootStackParamList } from "../AppNavigator";
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Profile"
+  "Login" | "Profile"
 >;
 
 const LoginScreen = () => {
@@ -17,7 +17,8 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      const name = await loginUser(email, password);
+      const { name, token } = await loginUser(email, password);
+      console.log(token); // For demonstration
       navigation.navigate("Profile", { email, name });
     } catch (error) {
       const errorMessage =
